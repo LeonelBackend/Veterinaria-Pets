@@ -1,0 +1,43 @@
+<div class="card p-4">
+  <h1 class="h3">HU04 · Mis citas</h1>
+
+  @if (servicio.citasOrdenadas().length === 0) {
+    <div class="alert alert-info" role="status">
+      Aún no tienes citas registradas. <a routerLink="/reservar">Reservar una cita</a>
+    </div>
+  } @else {
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Mascota</th>
+            <th>Servicio</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of servicio.citasOrdenadas(); track c.id) {
+            <tr>
+              <td>{{ c.fecha }}</td>
+              <td>{{ c.hora }}</td>
+              <td>{{ c.mascota }} ({{ c.especie }})</td>
+              <td>{{ c.servicio }}</td>
+              <td><span class="badge" [class]="colorEstado(c)">{{ c.estado }}</span></td>
+              <td>
+                @if (c.estado === 'Pendiente') {
+                  <button class="btn btn-sm btn-outline-success me-1" (click)="confirmar(c)">Confirmar</button>
+                }
+                @if (c.estado !== 'Cancelada') {
+                  <button class="btn btn-sm btn-outline-danger" (click)="cancelar(c)">Cancelar</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
