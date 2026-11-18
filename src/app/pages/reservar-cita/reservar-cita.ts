@@ -1,14 +1,16 @@
-import { Component, computed, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CitaService } from '../../services/cita.service';
+import { AuthService } from '../../services/auth.service';
 import { Cita } from '../../models/cita.model';
 
-// Fecha de hoy en formato AAAA-MM-DD (hora local)
+// Fecha de hoy en formato AAAA-MM-DD
 function hoy(): string {
   const d = new Date();
-  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  const mes = String(d.getMonth() + 1).padStart(2, '0');
+  const dia = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${mes}-${dia}`;
 }
 
 // Validador: no permite fechas pasadas
@@ -24,6 +26,7 @@ function fechaNoPasada(control: AbstractControl): ValidationErrors | null {
 })
 export class ReservarCita {
   readonly servicio = inject(CitaService);
+  readonly auth = inject(AuthService);
   private readonly fb = inject(FormBuilder);
 
   readonly fechaMinima = hoy();
@@ -37,13 +40,9 @@ export class ReservarCita {
     hora: ['', Validators.required],
   });
 
-  // Cada vez que cambia la fecha, se recalculan las horas ocupadas
-  private readonly fecha = toSignal(this.form.controls.fecha.valueChanges, { initialValue: '' });
-  readonly ocupadas = computed(() => this.servicio.horasOcupadas(this.fecha()));
-
-  constructor() {
-    // Si cambia la fecha, la hora elegida ya no es válida
-    this.form.controls.fecha.valueChanges.subscribe(() => this.form.controls.hora.setValue(''));
+  // Devuelve true si la hora ya está tomada en la fecha elegida
+  estaOcupada(hora: string): boolean {
+    return this.servicio.horasOcupadas(this.form.controls.fecha.value).includes(hora);
   }
 
   reservar(): void {
@@ -53,7 +52,16 @@ export class ReservarCita {
       return;
     }
     const v = this.form.getRawValue();
+
+    // Si la hora ya está ocupada, no se reserva
+    if (this.estaOcupada(v.hora)) {
+      this.form.controls.hora.setValue('');
+      this.form.controls.hora.markAsTouched();
+      return;
+    }
+
     const cita = this.servicio.reservar({
+      dueno: this.auth.usuarioActual()?.correo ?? '',
       mascota: v.mascota.trim(),
       especie: v.especie,
       servicio: v.tipoServicio,

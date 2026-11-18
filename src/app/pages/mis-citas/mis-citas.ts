@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CitaService } from '../../services/cita.service';
+import { AuthService } from '../../services/auth.service';
 import { Cita } from '../../models/cita.model';
 
 @Component({
@@ -11,6 +12,12 @@ import { Cita } from '../../models/cita.model';
 })
 export class MisCitas {
   readonly servicio = inject(CitaService);
+  readonly auth = inject(AuthService);
+
+  // Solo las citas del dueño que inició sesión
+  get citas(): Cita[] {
+    return this.servicio.listar(this.auth.usuarioActual()?.correo ?? '');
+  }
 
   confirmar(cita: Cita): void {
     this.servicio.cambiarEstado(cita.id, 'Confirmada');
@@ -23,6 +30,8 @@ export class MisCitas {
   }
 
   colorEstado(cita: Cita): string {
-    return { Pendiente: 'bg-warning text-dark', Confirmada: 'bg-success', Cancelada: 'bg-secondary' }[cita.estado];
+    if (cita.estado === 'Pendiente') return 'bg-warning text-dark';
+    if (cita.estado === 'Confirmada') return 'bg-success';
+    return 'bg-secondary';
   }
 }

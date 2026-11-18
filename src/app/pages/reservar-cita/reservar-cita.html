@@ -1,78 +1,86 @@
 <div class="card p-4">
   <h1 class="h3">HU03 · Reservar cita</h1>
-  <p class="text-muted">Prototipo local: no ingresar datos reales.</p>
 
-  @if (citaReservada(); as c) {
-    <div class="alert alert-success" role="status">
-      Cita reservada para <strong>{{ c.mascota }}</strong>: {{ c.servicio }}
-      el {{ c.fecha }} a las {{ c.hora }}. Estado: <strong>{{ c.estado }}</strong>.
-      <a routerLink="/mis-citas">Ver mis citas</a>
+  @if (auth.usuarioActual()?.rol !== 'dueno') {
+    <div class="alert alert-warning" role="status">
+      Para reservar una cita debes iniciar sesión como dueño de mascota.
+      <a routerLink="/login">Ingresar</a> o <a routerLink="/registro">Registrarme</a>
     </div>
+  } @else {
+    <p class="text-muted">Prototipo local: no ingresar datos reales.</p>
+
+    @if (citaReservada(); as c) {
+      <div class="alert alert-success" role="status">
+        Cita reservada para <strong>{{ c.mascota }}</strong>: {{ c.servicio }}
+        el {{ c.fecha }} a las {{ c.hora }}. Estado: <strong>{{ c.estado }}</strong>.
+        <a routerLink="/mis-citas">Ver mis citas</a>
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="reservar()" novalidate>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label for="mascota" class="form-label">Nombre de la mascota</label>
+          <input id="mascota" class="form-control" formControlName="mascota" placeholder="Ej. Luna">
+          @if (form.controls.mascota.touched && form.controls.mascota.invalid) {
+            <small class="text-danger">Ingresa el nombre de la mascota (mínimo 2 letras).</small>
+          }
+        </div>
+
+        <div class="col-md-6">
+          <label for="especie" class="form-label">Especie</label>
+          <select id="especie" class="form-select" formControlName="especie">
+            <option value="">Selecciona...</option>
+            <option>Perro</option>
+            <option>Gato</option>
+            <option>Otro</option>
+          </select>
+          @if (form.controls.especie.touched && form.controls.especie.invalid) {
+            <small class="text-danger">Selecciona la especie.</small>
+          }
+        </div>
+
+        <div class="col-md-6">
+          <label for="tipoServicio" class="form-label">Servicio</label>
+          <select id="tipoServicio" class="form-select" formControlName="tipoServicio">
+            <option value="">Selecciona...</option>
+            @for (s of servicio.servicios; track s) {
+              <option [value]="s">{{ s }}</option>
+            }
+          </select>
+          @if (form.controls.tipoServicio.touched && form.controls.tipoServicio.invalid) {
+            <small class="text-danger">Selecciona un servicio.</small>
+          }
+        </div>
+
+        <div class="col-md-6">
+          <label for="fecha" class="form-label">Fecha</label>
+          <input id="fecha" type="date" class="form-control" formControlName="fecha" [min]="fechaMinima">
+          @if (form.controls.fecha.touched && form.controls.fecha.hasError('required')) {
+            <small class="text-danger">Indica la fecha.</small>
+          }
+          @if (form.controls.fecha.hasError('fechaPasada')) {
+            <small class="text-danger">No puedes elegir una fecha pasada.</small>
+          }
+        </div>
+
+        <div class="col-12">
+          <label for="hora" class="form-label">Horario</label>
+          <select id="hora" class="form-select" formControlName="hora">
+            <option value="">Selecciona un horario...</option>
+            @for (h of servicio.horarios; track h) {
+              <option [value]="h" [disabled]="estaOcupada(h)">
+                {{ h }} {{ estaOcupada(h) ? '(no disponible)' : '' }}
+              </option>
+            }
+          </select>
+          @if (form.controls.hora.touched && form.controls.hora.invalid) {
+            <small class="text-danger">Selecciona un horario disponible.</small>
+          }
+        </div>
+      </div>
+
+      <button class="btn btn-success mt-4" type="submit">Reservar</button>
+    </form>
   }
-
-  <form [formGroup]="form" (ngSubmit)="reservar()" novalidate>
-    <div class="row g-3">
-      <div class="col-md-6">
-        <label for="mascota" class="form-label">Nombre de la mascota</label>
-        <input id="mascota" class="form-control" formControlName="mascota" placeholder="Ej. Luna">
-        @if (form.controls.mascota.touched && form.controls.mascota.invalid) {
-          <small class="text-danger">Ingresa el nombre de la mascota (mínimo 2 letras).</small>
-        }
-      </div>
-
-      <div class="col-md-6">
-        <label for="especie" class="form-label">Especie</label>
-        <select id="especie" class="form-select" formControlName="especie">
-          <option value="">Selecciona...</option>
-          <option>Perro</option>
-          <option>Gato</option>
-          <option>Otro</option>
-        </select>
-        @if (form.controls.especie.touched && form.controls.especie.invalid) {
-          <small class="text-danger">Selecciona la especie.</small>
-        }
-      </div>
-
-      <div class="col-md-6">
-        <label for="tipoServicio" class="form-label">Servicio</label>
-        <select id="tipoServicio" class="form-select" formControlName="tipoServicio">
-          <option value="">Selecciona...</option>
-          @for (s of servicio.servicios; track s) {
-            <option [value]="s">{{ s }}</option>
-          }
-        </select>
-        @if (form.controls.tipoServicio.touched && form.controls.tipoServicio.invalid) {
-          <small class="text-danger">Selecciona un servicio.</small>
-        }
-      </div>
-
-      <div class="col-md-6">
-        <label for="fecha" class="form-label">Fecha</label>
-        <input id="fecha" type="date" class="form-control" formControlName="fecha" [min]="fechaMinima">
-        @if (form.controls.fecha.touched && form.controls.fecha.hasError('required')) {
-          <small class="text-danger">Indica la fecha.</small>
-        }
-        @if (form.controls.fecha.hasError('fechaPasada')) {
-          <small class="text-danger">No puedes elegir una fecha pasada.</small>
-        }
-      </div>
-
-      <div class="col-12">
-        <label for="hora" class="form-label">Horario</label>
-        <select id="hora" class="form-select" formControlName="hora">
-          <option value="">Selecciona un horario...</option>
-          @for (h of servicio.horarios; track h) {
-            <option [value]="h" [disabled]="ocupadas().includes(h)">
-              {{ h }} {{ ocupadas().includes(h) ? '(no disponible)' : '' }}
-            </option>
-          }
-        </select>
-        @if (form.controls.hora.touched && form.controls.hora.invalid) {
-          <small class="text-danger">Selecciona un horario disponible.</small>
-        }
-      </div>
-    </div>
-
-    <button class="btn btn-success mt-4" type="submit">Reservar</button>
-  </form>
 </div>
