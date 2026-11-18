@@ -1,20 +1,25 @@
 <header class="navbar navbar-expand-lg navbar-dark bg-success">
   <div class="container">
-    <a class="navbar-brand" routerLink="/">🐾 Veterinaria Pets</a>
-    <nav class="d-flex gap-3">
+    <a class="navbar-brand" routerLink="/">🐾 Veterinaria Pets </a>
+    <nav class="d-flex gap-3 align-items-center">
       <a class="text-white" routerLink="/" routerLinkActive="fw-bold" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
-      <a class="text-white" routerLink="/historial" routerLinkActive="fw-bold">HU07 Historial</a>
-      <a class="text-white" routerLink="/atenciones/nueva" routerLinkActive="fw-bold">HU08 Nueva atención</a>
-      <a class="text-white" routerLink="/reservar" routerLinkActive="fw-bold">HU03 Reservar cita</a>
-      <a class="text-white" routerLink="/mis-citas" routerLinkActive="fw-bold">HU04 Mis citas</a>
+      @if (auth.usuarioActual(); as usuario) {
+        @if (usuario.rol === 'dueno') {
+          <a class="text-white" routerLink="/reservar" routerLinkActive="fw-bold">HU03 Reservar cita</a>
+          <a class="text-white" routerLink="/mis-citas" routerLinkActive="fw-bold">HU04 Mis citas</a>
+        }
+        @if (usuario.rol === 'veterinario') {
+          <a class="text-white" routerLink="/historial" routerLinkActive="fw-bold">HU07 Historial</a>
+          <a class="text-white" routerLink="/atenciones/nueva" routerLinkActive="fw-bold">HU08 Nueva atención</a>
+        }
+        <span class="text-white small">{{ usuario.nombres }} ({{ nombreRol[usuario.rol] }})</span>
+        <button type="button" class="btn btn-sm btn-outline-light" (click)="salir()">Salir</button>
+      } @else {
+        <a class="text-white" routerLink="/login" routerLinkActive="fw-bold">Ingresar</a>
+        <a class="text-white" routerLink="/registro" routerLinkActive="fw-bold">Registrarme</a>
+      }
     </nav>
   </div>
 </header>
-
-<main class="container py-4">
-  <router-outlet></router-outlet>
-</main>
-
-<footer class="container py-3 text-muted small">
-  Prototipo académico · Grupo 2 · Los datos son ficticios
-</footer>
+<main class="container py-4"><router-outlet></router-outlet></main>
+<footer class="container py-3 text-muted small">Prototipo académico · Grupo 2 · Los datos son ficticios</footer>
