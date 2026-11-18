@@ -1,0 +1,106 @@
+<div class="row justify-content-center">
+  <div class="col-12 col-md-8 col-lg-6">
+    <div class="card p-4">
+      <h1 class="h3">HU01 · Registro del dueño de la mascota</h1>
+      <p class="text-muted">Crea tu cuenta para reservar citas en línea.</p>
+
+      @if (correoDuplicado()) {
+        <div class="alert alert-warning" role="alert">Ya existe una cuenta con ese correo. <a routerLink="/login">Inicia sesión</a></div>
+      }
+
+      <form [formGroup]="formulario" (ngSubmit)="registrarme()" novalidate>
+        <div class="mb-3">
+          <label for="nombres" class="form-label">Nombres y apellidos</label>
+          <input id="nombres" type="text" class="form-control" formControlName="nombres"
+            [class.is-invalid]="mostrarError('nombres')" [class.is-valid]="esCampoValido('nombres')">
+          @if (mostrarError('nombres')) {
+            <div class="invalid-feedback">
+              @if (formulario.controls.nombres.hasError('required')) {
+                Los nombres son obligatorios.
+              } @else {
+                Debe tener al menos 3 caracteres.
+              }
+            </div>
+          }
+        </div>
+
+        <div class="row">
+          <div class="col-12 col-sm-6 mb-3">
+            <label for="dni" class="form-label">DNI</label>
+            <input id="dni" type="text" inputmode="numeric" maxlength="8" class="form-control" formControlName="dni"
+              [class.is-invalid]="mostrarError('dni')" [class.is-valid]="esCampoValido('dni')">
+            @if (mostrarError('dni')) {
+              <div class="invalid-feedback">
+                @if (formulario.controls.dni.hasError('required')) {
+                  El DNI es obligatorio.
+                } @else {
+                  El DNI debe tener 8 dígitos.
+                }
+              </div>
+            }
+          </div>
+
+          <div class="col-12 col-sm-6 mb-3">
+            <label for="celular" class="form-label">Celular</label>
+            <input id="celular" type="tel" inputmode="numeric" maxlength="9" class="form-control" formControlName="celular"
+              [class.is-invalid]="mostrarError('celular')" [class.is-valid]="esCampoValido('celular')">
+            @if (mostrarError('celular')) {
+              <div class="invalid-feedback">
+                @if (formulario.controls.celular.hasError('required')) {
+                  El celular es obligatorio.
+                } @else {
+                  Ingresa un celular de 9 dígitos que empiece con 9.
+                }
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="correo" class="form-label">Correo electrónico</label>
+          <input id="correo" type="email" class="form-control" formControlName="correo"
+            [class.is-invalid]="mostrarError('correo')" [class.is-valid]="esCampoValido('correo')">
+          @if (mostrarError('correo')) {
+            <div class="invalid-feedback">
+              @if (formulario.controls.correo.hasError('required')) {
+                El correo es obligatorio.
+              } @else {
+                Ingresa un correo válido.
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label for="contrasena" class="form-label">Contraseña</label>
+          <input id="contrasena" type="password" class="form-control" formControlName="contrasena"
+            [class.is-invalid]="mostrarError('contrasena')" [class.is-valid]="esCampoValido('contrasena')">
+          @if (mostrarError('contrasena')) {
+            <div class="invalid-feedback">
+              @if (formulario.controls.contrasena.hasError('required')) {
+                La contraseña es obligatoria.
+              } @else {
+                Debe tener al menos 6 caracteres.
+              }
+            </div>
+          }
+        </div>
+
+        <div class="form-check mb-4">
+          <input id="acepta" type="checkbox" class="form-check-input" formControlName="acepta"
+            [class.is-invalid]="mostrarError('acepta')">
+          <label for="acepta" class="form-check-label">Acepto el tratamiento de mis datos personales (Ley N.° 29733).</label>
+          @if (mostrarError('acepta')) {
+            <div class="invalid-feedback">Debes aceptar el tratamiento de tus datos para registrarte.</div>
+          }
+        </div>
+
+        <div class="d-grid">
+          <button type="submit" class="btn btn-success">Registrarme</button>
+        </div>
+      </form>
+
+      <p class="mt-3 mb-0 text-center">¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a></p>
+    </div>
+  </div>
+</div>
