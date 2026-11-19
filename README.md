@@ -1,1 +1,1 @@
-# Veterinaria Huellitas - Angular (prototipo)
+# Veterinaria Pets - Angular (prototipo)

@@ -23,6 +23,7 @@ export class Registro {
   });
 
   correoDuplicado = signal(false);
+  verContrasena = signal(false);
 
   mostrarError(campo: keyof typeof this.formulario.controls): boolean {
     const control = this.formulario.controls[campo];

@@ -1,25 +1,26 @@
-<header class="navbar navbar-expand-lg navbar-dark bg-success">
+<header class="navbar navbar-expand-lg navbar-dark app-header">
   <div class="container">
-    <a class="navbar-brand" routerLink="/">🐾 Veterinaria Pets </a>
-    <nav class="d-flex gap-3 align-items-center">
-      <a class="text-white" routerLink="/" routerLinkActive="fw-bold" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+    <a class="navbar-brand fw-semibold" routerLink="/" (click)="cerrarMenu()">🐾 Veterinaria Pets</a>
+    <button class="navbar-toggler" type="button" (click)="menuAbierto = !menuAbierto" [attr.aria-expanded]="menuAbierto" aria-controls="menu-principal" aria-label="Abrir menú"><span class="navbar-toggler-icon"></span></button>
+    <nav id="menu-principal" class="navbar-collapse" [class.show]="menuAbierto"><div class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+      <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="cerrarMenu()">Inicio</a>
       @if (auth.usuarioActual(); as usuario) {
         @if (usuario.rol === 'dueno') {
-          <a class="text-white" routerLink="/reservar" routerLinkActive="fw-bold">HU03 Reservar cita</a>
-          <a class="text-white" routerLink="/mis-citas" routerLinkActive="fw-bold">HU04 Mis citas</a>
+          <a class="nav-link" routerLink="/reservar" routerLinkActive="active" (click)="cerrarMenu()">Reservar cita</a>
+          <a class="nav-link" routerLink="/mis-citas" routerLinkActive="active" (click)="cerrarMenu()">Mis citas</a>
         }
         @if (usuario.rol === 'veterinario') {
-          <a class="text-white" routerLink="/historial" routerLinkActive="fw-bold">HU07 Historial</a>
-          <a class="text-white" routerLink="/atenciones/nueva" routerLinkActive="fw-bold">HU08 Nueva atención</a>
+          <a class="nav-link" routerLink="/historial" routerLinkActive="active" (click)="cerrarMenu()">Historial clínico</a>
+          <a class="btn btn-light btn-sm ms-lg-2" routerLink="/atenciones/nueva" (click)="cerrarMenu()">Nueva atención</a>
         }
-        <span class="text-white small">{{ usuario.nombres }} ({{ nombreRol[usuario.rol] }})</span>
-        <button type="button" class="btn btn-sm btn-outline-light" (click)="salir()">Salir</button>
+        <span class="navbar-text text-white-50 small ms-lg-3">{{ usuario.nombres }} · {{ nombreRol[usuario.rol] }}</span>
+        <button type="button" class="btn btn-sm btn-outline-light ms-lg-2" (click)="salir()">Salir</button>
       } @else {
-        <a class="text-white" routerLink="/login" routerLinkActive="fw-bold">Ingresar</a>
-        <a class="text-white" routerLink="/registro" routerLinkActive="fw-bold">Registrarme</a>
+        <a class="nav-link" routerLink="/login" routerLinkActive="active" (click)="cerrarMenu()">Ingresar</a>
+        <a class="btn btn-light btn-sm ms-lg-2" routerLink="/registro" (click)="cerrarMenu()">Crear cuenta</a>
       }
-    </nav>
+      </div></nav>
   </div>
 </header>
 <main class="container py-4"><router-outlet></router-outlet></main>
-<footer class="container py-3 text-muted small">Prototipo académico · Grupo 2 · Los datos son ficticios</footer>
+<footer class="container py-4 text-muted small text-center">Veterinaria Pets · Los datos de esta demostración son ficticios.</footer>
