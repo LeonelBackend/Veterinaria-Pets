@@ -7,9 +7,13 @@ export class App {
   auth = inject(AuthService);
   private router = inject(Router);
   nombreRol: Record<Rol, string> = { dueno: 'Dueño', recepcionista: 'Recepcionista', veterinario: 'Veterinario' };
+  menuAbierto = false;
+
+  cerrarMenu() { this.menuAbierto = false; }
 
   salir() {
     this.auth.salir();
+    this.cerrarMenu();
     this.router.navigate(['/login']);
   }
 }

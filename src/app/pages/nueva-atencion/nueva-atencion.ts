@@ -15,7 +15,7 @@ export class NuevaAtencion {
 
   readonly form = this.fb.nonNullable.group({
     mascotaId: [1, Validators.required],
-    fecha: ['', Validators.required],
+    fecha: [new Date().toISOString().slice(0, 10), Validators.required],
     diagnostico: ['', Validators.required],
     tratamiento: ['', Validators.required],
     observaciones: ['']
@@ -30,7 +30,7 @@ export class NuevaAtencion {
 
     this.servicio.registrar(this.form.getRawValue());
     this.guardado = true;
-    this.form.patchValue({fecha: '', diagnostico: '', tratamiento: '', observaciones: ''});
+    this.form.patchValue({fecha: new Date().toISOString().slice(0, 10), diagnostico: '', tratamiento: '', observaciones: ''});
     this.form.markAsPristine();
     this.form.markAsUntouched();
   }
