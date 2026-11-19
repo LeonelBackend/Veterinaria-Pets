@@ -1,0 +1,77 @@
+<section class="card form-card p-4 p-md-5">
+  <p class="eyebrow">Recepción</p>
+  <h1 class="h3">Gestión de la agenda diaria de citas</h1>
+
+  @if (auth.usuarioActual()?.rol !== 'recepcionista') {
+    <div class="alert alert-warning" role="status">
+      Para gestionar la agenda diaria debes iniciar sesión como recepcionista.
+      <a routerLink="/login">Ingresar</a>
+    </div>
+  } @else {
+    <p class="text-muted">Revisa las citas programadas en orden cronológico y registra la llegada de los pacientes.</p>
+
+    <div class="row g-3 align-items-end mb-4">
+      <div class="col-sm-6 col-md-4">
+        <label for="fechaAgenda" class="form-label">Fecha de agenda</label>
+        <input id="fechaAgenda" type="date" class="form-control" [(ngModel)]="fechaSeleccionada">
+      </div>
+      <div class="col-sm-6 col-md-8">
+        <div class="patient-summary">
+          <strong>Resumen del día:</strong>
+          <span>{{ citas.length }} cita(s) programada(s)</span>
+          <span>· {{ totalEnEspera }} en sala de espera</span>
+        </div>
+      </div>
+    </div>
+
+    @if (citaActualizada(); as c) {
+      <div class="alert alert-success" role="status">
+        Se registró la llegada de <strong>{{ c.mascota }}</strong> ({{ c.hora }}). Estado actualizado a
+        <strong>En sala de espera</strong> para alertar al veterinario.
+      </div>
+    }
+
+    @if (citas.length === 0) {
+      <div class="alert alert-info mb-0" role="status">
+        No hay citas programadas para la fecha seleccionada.
+      </div>
+    } @else {
+      <div class="table-responsive">
+        <table class="table table-striped align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Hora</th>
+              <th>Mascota</th>
+              <th>Propietario / Contacto</th>
+              <th>Servicio</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of citas; track c.id) {
+              <tr>
+                <td class="fw-semibold text-nowrap">{{ c.hora }}</td>
+                <td>{{ c.mascota }} ({{ c.especie }})</td>
+                <td>{{ c.dueno }}</td>
+                <td>{{ c.servicio }}</td>
+                <td><span class="badge" [class]="colorEstado(c)">{{ c.estado }}</span></td>
+                <td>
+                  @if (puedeMarcarLlegada(c)) {
+                    <button type="button" class="btn btn-sm btn-success" (click)="marcarLlegada(c)">
+                      Marcar llegada
+                    </button>
+                  } @else if (c.estado === 'En sala de espera') {
+                    <span class="text-muted small">Paciente en espera</span>
+                  } @else {
+                    <span class="text-muted small">—</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</section>

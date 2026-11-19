@@ -1,4 +1,4 @@
-export type EstadoCita = 'Pendiente' | 'Confirmada' | 'Cancelada';
+export type EstadoCita = 'Pendiente' | 'Confirmada' | 'En sala de espera' | 'Cancelada';
 
 export interface Cita {
   id: number;

@@ -6,8 +6,12 @@
       <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="cerrarMenu()">Inicio</a>
       @if (auth.usuarioActual(); as usuario) {
         @if (usuario.rol === 'dueno') {
+          <a class="nav-link" routerLink="/mis-mascotas" routerLinkActive="active" (click)="cerrarMenu()">Mis mascotas</a>
           <a class="nav-link" routerLink="/reservar" routerLinkActive="active" (click)="cerrarMenu()">Reservar cita</a>
           <a class="nav-link" routerLink="/mis-citas" routerLinkActive="active" (click)="cerrarMenu()">Mis citas</a>
+        }
+        @if (usuario.rol === 'recepcionista') {
+          <a class="nav-link" routerLink="/agenda-recepcion" routerLinkActive="active" (click)="cerrarMenu()">Agenda del día</a>
         }
         @if (usuario.rol === 'veterinario') {
           <a class="nav-link" routerLink="/historial" routerLinkActive="active" (click)="cerrarMenu()">Historial clínico</a>
