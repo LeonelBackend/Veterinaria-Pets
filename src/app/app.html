@@ -1,6 +1,6 @@
 <header class="navbar navbar-expand-lg navbar-dark app-header">
   <div class="container">
-    <a class="navbar-brand fw-semibold" routerLink="/" (click)="cerrarMenu()">🐾 Huellitas</a>
+    <a class="navbar-brand fw-semibold" routerLink="/" (click)="cerrarMenu()">🐾 Veterinaria Pets</a>
     <button class="navbar-toggler" type="button" (click)="menuAbierto = !menuAbierto" [attr.aria-expanded]="menuAbierto" aria-controls="menu-principal" aria-label="Abrir menú"><span class="navbar-toggler-icon"></span></button>
     <nav id="menu-principal" class="navbar-collapse" [class.show]="menuAbierto"><div class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
       <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="cerrarMenu()">Inicio</a>
@@ -19,4 +19,4 @@
   </div>
 </header>
 <main class="container py-4"><router-outlet></router-outlet></main>
-<footer class="container py-4 text-muted small text-center">Huellitas · Los datos de esta demostración son ficticios.</footer>
+<footer class="container py-4 text-muted small text-center">Veterinaria Pets · Los datos de esta demostración son ficticios.</footer>
