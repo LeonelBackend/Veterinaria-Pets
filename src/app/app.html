@@ -5,6 +5,12 @@
     <nav id="menu-principal" class="navbar-collapse" [class.show]="menuAbierto"><div class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
       <a class="nav-link" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="cerrarMenu()">Inicio</a>
       @if (auth.usuarioActual(); as usuario) {
+        @if (usuario.rol === 'dueno') {
+          <a class="nav-link" routerLink="/mis-mascotas" routerLinkActive="active" (click)="cerrarMenu()">Mis mascotas</a>
+        }
+        @if (usuario.rol === 'recepcionista') {
+          <a class="nav-link" routerLink="/agenda-recepcion" routerLinkActive="active" (click)="cerrarMenu()">Agenda del día</a>
+        }
         @if (usuario.rol === 'veterinario') {
           <a class="nav-link" routerLink="/historial" routerLinkActive="active" (click)="cerrarMenu()">Historial clínico</a>
           <a class="btn btn-light btn-sm ms-lg-2" routerLink="/atenciones/nueva" (click)="cerrarMenu()">Nueva atención</a>
